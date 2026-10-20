@@ -1,0 +1,60 @@
+
+services:
+  postgres:
+    image: postgres:17
+    container_name: orderservice-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: orders
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - orderservice-postgres-data:/var/lib/postgresql/data
+    secrets:
+      - postgres_password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d orders"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      Jwt__Issuer: OrderService
+      Jwt__Audience: OrderService.Api
+      Jwt__ExpirationMinutes: "60"
+      DemoUser__UserId: "1"
+      DemoUser__Username: "demo"
+    ports:
+      - "127.0.0.1:8080:8080"
+    secrets:
+      - source: connection_string
+        target: ConnectionStrings__DefaultConnection
+      - source: jwt_key
+        target: Jwt__SigningKey
+      - source: demo_user_password_hash
+        target: DemoUser__PasswordHash
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+secrets:
+  postgres_password:
+    file: ./docker/secrets/postgres_password
+  connection_string:
+    file: ./docker/secrets/connection_string
+  jwt_key:
+    file: ./docker/secrets/jwt_key
+  demo_user_password_hash:
+    file: ./docker/secrets/demo_user_password_hash
+
+volumes:
+  orderservice-postgres-data:

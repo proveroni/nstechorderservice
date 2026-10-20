@@ -1,0 +1,74 @@
+info:
+  name: Create Order
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/orders"
+  body:
+    type: json
+    data: |
+      
+      {
+        "customerId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        "currency": "brl",
+        "items": [
+          {
+            "productId": "11111111-1111-4111-8111-111111111111",
+            "quantity": 2
+          },
+          {
+            "productId": "22222222-2222-4222-8222-222222222222",
+            "quantity": 1
+          }
+        ]
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const response = res.getBody();
+
+        if (res.getStatus() === 201 && response?.id) {
+            bru.setVar("orderId", response.id);
+
+            console.log("Pedido criado:", response.id);
+        }
+    - type: tests
+      code: |-
+        const response = res.getBody();
+
+        test("Deve retornar HTTP 201", function () {
+            expect(res.getStatus()).to.equal(201);
+        });
+
+        test("Deve retornar os dados do pedido criado", function () {
+            expect(response.id).to.be.a("string");
+            expect(response.id).to.not.equal("");
+            expect(response.id)
+                .to.not.equal("00000000-0000-0000-0000-000000000000");
+
+            expect(response.customerId)
+                .to.equal("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa");
+
+            expect(response.status).to.equal(1);
+            expect(response.total).to.equal(620);
+
+            expect(response.createdAt).to.be.a("string");
+        });
+
+        test("Deve criar o pedido sem confirmação ou cancelamento", function () {
+            const response = res.getBody();
+
+            expect(response.status).to.equal(1);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

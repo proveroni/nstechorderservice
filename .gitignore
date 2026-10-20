@@ -1,0 +1,123 @@
+
+# ============================================================
+# C# / .NET - Build
+# ============================================================
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+artifacts/
+publish/
+*.dll
+*.exe
+*.pdb
+*.cache
+
+# ============================================================
+# Visual Studio
+# ============================================================
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.rsuser
+*.sln.ide
+*.VC.db
+*.VC.opendb
+*.opendb
+*.sdf
+*.opensdf
+*.pidb
+*.svd
+*.pdbstr
+
+# ============================================================
+# Visual Studio Code
+# ============================================================
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# ============================================================
+# JetBrains Rider / ReSharper
+# ============================================================
+.idea/
+_ReSharper*/
+*.DotSettings.user
+*.sln.iml
+
+# ============================================================
+# NuGet
+# ============================================================
+*.nupkg
+*.snupkg
+packages/
+!**/packages/build/
+.nuget/packages/
+
+# ============================================================
+# Testes e cobertura
+# ============================================================
+TestResults/
+**/TestResults/
+coverage/
+**/coverage/
+.coverage/
+*.coverage
+*.coveragexml
+coverage.cobertura.xml
+coverage.opencover.xml
+*.trx
+*.testlog
+
+# ============================================================
+# Logs e arquivos temporarios
+# ============================================================
+*.log
+*.tmp
+*.temp
+*.bak
+*.old
+*.orig
+*.swp
+*.swo
+*~
+~$*
+*.pid
+
+# ============================================================
+# Configuracoes locais e variaveis de ambiente
+# ============================================================
+.env
+.env.*
+!.env.example
+!.env.*.example
+appsettings.Local.json
+appsettings.*.Local.json
+launchSettings.Local.json
+
+# ============================================================
+# Secrets do Docker - OrderService
+# ============================================================
+/docker/secrets/*
+!/docker/secrets/*.example
+!/docker/secrets/.gitkeep
+
+# ============================================================
+# Certificados e chaves privadas
+# ============================================================
+*.pfx
+*.p12
+*.pem
+*.key
+*.snk
+
+# ============================================================
+# Arquivos do sistema operacional
+# ============================================================
+.DS_Store
+Thumbs.db
+Thumbs.db:encryptable
+Desktop.ini
+$RECYCLE.BIN/

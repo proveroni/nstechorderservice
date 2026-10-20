@@ -1,0 +1,43 @@
+info:
+  name: Cancel Order
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{baseUrl}}/orders/{{orderId}}/cancel"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Deve retornar HTTP 204", function () {
+            expect(res.getStatus()).to.equal(204);
+        });
+
+        test("Não deve retornar conteúdo", function () {
+            const body = res.getBody();
+
+            expect(
+                body === null ||
+                body === undefined ||
+                body === ""
+            ).to.equal(true);
+        });
+
+        test("Deve possuir identificador do pedido", function () {
+            const orderId = bru.getVar("orderId");
+
+            expect(orderId).to.be.a("string");
+            expect(orderId).to.not.equal("");
+            expect(orderId)
+                .to.not.equal("00000000-0000-0000-0000-000000000000");
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

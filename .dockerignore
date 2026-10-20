@@ -1,0 +1,32 @@
+
+# Artefatos de compilacao
+**/bin/
+**/obj/
+
+# Visual Studio e VS Code
+.vs/
+.vscode/
+*.user
+*.suo
+
+# Git
+.git/
+.gitignore
+
+# Documentacao e testes
+tests/
+docs/
+README.md
+
+# Ferramentas auxiliares
+tools/
+
+# Arquivos locais e temporarios
+*.log
+*.tmp
+*.bak
+.env
+.env.*
+
+# Secrets do Docker
+docker/secrets/

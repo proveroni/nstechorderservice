@@ -1,0 +1,27 @@
+<Solution>
+  <Folder Name="/docker/">
+    <File Path="docker/Dockerfile.api" />
+  </Folder>
+  <Folder Name="/docs/">
+    <File Path="docs/decisions.md" />
+  </Folder>
+  <Folder Name="/SolutionItens/">
+    <File Path="compose.yaml" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Api/OrderService.Api.csproj" Id="0118ce1b-1dcc-4f8a-9057-86429da254af" />
+    <Project Path="src/Application/OrderService.Application.csproj" />
+    <Project Path="src/CrossCutting/OrderService.CrossCutting.csproj" />
+    <Project Path="src/Domain/OrderService.Domain.csproj" />
+    <Project Path="src/Infrastructure/OrderService.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
+  <Folder Name="/tests/Integration/">
+    <Project Path="tests/Integration/Infrastructure/OrderService.Infrastructure.IntegrationTests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Unit/">
+    <Project Path="tests/Unit/Application/OrderService.Application.UnitTests.csproj" />
+    <Project Path="tests/Unit/CrossCutting/OrderService.CrossCutting.UnitTests.csproj" />
+    <Project Path="tests/Unit/Domain/OrderService.Domain.UnitTests.csproj" />
+  </Folder>
+</Solution>

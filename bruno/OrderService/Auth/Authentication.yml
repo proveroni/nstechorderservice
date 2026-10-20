@@ -1,0 +1,33 @@
+info:
+  name: Authentication
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/auth/token"
+  body:
+    type: json
+    data: |-
+      {
+        "username": "demo",
+        "password": "Teste"
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const response = res.getBody();
+
+        if (response && response.accessToken) {
+            bru.setVar("accessToken", response.accessToken);
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

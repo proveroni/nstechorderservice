@@ -1,0 +1,89 @@
+info:
+  name: Get Order By Id
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: "{{baseUrl}}/orders/{{orderId}}"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        const response = res.getBody();
+        const orderId = bru.getVar("orderId");
+
+        test("Deve retornar HTTP 200", function () {
+            expect(res.getStatus()).to.equal(200);
+        });
+
+        test("Deve retornar o pedido solicitado", function () {
+            expect(response.id).to.equal(orderId);
+
+            expect(response.customerId)
+                .to.equal("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa");
+
+            expect(response.status).to.be.oneOf([1, 2, 3]);
+            expect(response.total).to.equal(620);
+
+            expect(response.createdAt).to.be.a("string");
+        });
+
+        test("Deve retornar os itens do pedido", function () {
+            expect(response.items).to.be.an("array");
+            expect(response.items).to.have.lengthOf(2);
+
+            const keyboard = response.items.find(
+                item => item.productId ===
+                    "11111111-1111-4111-8111-111111111111"
+            );
+
+            const mouse = response.items.find(
+                item => item.productId ===
+                    "22222222-2222-4222-8222-222222222222"
+            );
+
+            expect(keyboard).to.exist;
+            expect(keyboard.quantity).to.equal(2);
+            expect(keyboard.unitPrice).to.equal(250);
+           expect(keyboard.quantity * keyboard.unitPrice).to.equal(500);
+
+            expect(mouse).to.exist;
+            expect(mouse.quantity).to.equal(1);
+            expect(mouse.unitPrice).to.equal(120);
+            expect(mouse.quantity * mouse.unitPrice).to.equal(120);
+        });
+
+        test("Deve retornar datas coerentes com o estado", function () {
+            if (response.status === 1) {
+                expect(response.confirmedAt).to.be.null;
+                expect(response.canceledAt).to.be.null;
+            }
+
+            if (response.status === 2) {
+                expect(response.confirmedAt).to.be.a("string");
+                expect(response.canceledAt).to.be.null;
+            }
+
+            if (response.status === 3) {
+                expect(response.canceledAt).to.be.a("string");
+            }
+        });
+
+        test("O total do pedido deve corresponder à soma dos itens", function () {
+            const calculatedTotal = response.items.reduce(
+                (total, item) => total + item.quantity * item.unitPrice,
+                0
+            );
+
+            expect(calculatedTotal).to.equal(response.total);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

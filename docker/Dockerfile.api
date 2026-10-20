@@ -1,0 +1,44 @@
+
+# Etapa 1 — Compilação
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+
+WORKDIR /src
+
+# Copia os projetos necessários para restaurar dependências.
+COPY ["src/Api/OrderService.Api.csproj", "src/Api/"]
+COPY ["src/Application/OrderService.Application.csproj", "src/Application/"]
+COPY ["src/Domain/OrderService.Domain.csproj", "src/Domain/"]
+COPY ["src/Infrastructure/OrderService.Infrastructure.csproj", "src/Infrastructure/"]
+COPY ["src/CrossCutting/OrderService.CrossCutting.csproj", "src/CrossCutting/"]
+
+RUN dotnet restore "src/Api/OrderService.Api.csproj"
+
+# Copia o código-fonte.
+COPY src/ src/
+
+# Publica a API em modo Release.
+RUN dotnet publish "src/Api/OrderService.Api.csproj" \
+    --configuration Release \
+    --output /app/publish \
+    --no-restore \
+    /p:UseAppHost=false
+
+# Etapa 2 — Execução
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libgssapi-krb5-2 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+ENV ASPNETCORE_ENVIRONMENT=Production
+
+EXPOSE 8080
+
+COPY --from=build /app/publish .
+
+# Executa a aplicação com usuário sem privilégios.
+USER $APP_UID
+
+ENTRYPOINT ["dotnet", "OrderService.Api.dll"]
